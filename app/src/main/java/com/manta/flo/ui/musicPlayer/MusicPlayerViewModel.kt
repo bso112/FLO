@@ -1,4 +1,4 @@
-package com.manta.flo.viewModel
+package com.manta.flo.ui.musicPlayer
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
@@ -9,7 +9,7 @@ import com.manta.flo.model.SongResponse
 import com.manta.flo.repository.MainRepository
 import kotlinx.coroutines.launch
 
-class MainViewModel @ViewModelInject constructor(
+class MusicPlayerViewModel @ViewModelInject constructor(
     private val repository: MainRepository
 ) : ViewModel() {
 

@@ -7,14 +7,14 @@
     <data>
         <variable
             name="viewModel"
-            type="com.manta.flo.viewModel.MainViewModel" />
+            type="com.manta.flo.ui.musicPlayer.MusicPlayerViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/black"
-        tools:context=".MusicPlayerActivity"
+        tools:context=".ui.musicPlayer.MusicPlayerActivity"
         app:toast="@{viewModel.toastLiveData}">
 
 

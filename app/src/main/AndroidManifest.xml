@@ -13,14 +13,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FLO">
-        <activity android:name=".MusicPlayerActivity" >
+        <activity android:name=".ui.musicPlayer.MusicPlayerActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SplashActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".ui.SplashActivity" />
+        <activity android:name=".ui.MainActivity">
         </activity>
     </application>
 
