@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="viewModel"
             type="com.manta.flo.ui.musicPlayer.MusicPlayerViewModel" />
@@ -14,8 +15,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/black"
-        tools:context=".ui.musicPlayer.MusicPlayerActivity"
-        app:toast="@{viewModel.toastLiveData}">
+        app:toast="@{viewModel.toastLiveData}"
+        tools:context=".ui.musicPlayer.MusicPlayerActivity">
 
 
         <ImageButton
@@ -64,7 +65,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.26" />
+            app:layout_constraintVertical_bias="0.26"
+            app:image_uri="@{viewModel.songLiveData.imageUri}" />
 
 
         <LinearLayout
@@ -91,46 +93,14 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/linearLayout2"
+        <com.manta.flo.ui.MusicPlayerView
+            android:id="@+id/music_player"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:gravity="center"
+            android:layout_height="wrap_content"
+            app:music_uri="@{viewModel.songLiveData.fileUri}"
             app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-            app:layout_constraintVertical_bias="1.0">
-
-            <ImageButton
-                android:id="@+id/btn_loop"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@color/black" />
-
-            <ImageButton
-                android:id="@+id/btn_prv"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@color/black" />
-
-            <ImageButton
-                android:id="@+id/btn_play"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@color/black" />
-
-            <ImageButton
-                android:id="@+id/btn_nxt"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@color/black" />
-
-            <ImageButton
-                android:id="@+id/btn_shuffle"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@color/black" />
-
-        </LinearLayout>
+            app:layout_constraintVertical_bias="1.0" />
 
         <LinearLayout
             android:id="@+id/linearLayout3"

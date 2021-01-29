@@ -13,9 +13,9 @@ data class SongResponse(
     @SerializedName("duration")
     val duration: Int,
     @SerializedName("image")
-    val imageLink: String,
+    val imageUri: String,
     @SerializedName("file")
-    val fileLink: String,
+    val fileUri: String,
     @SerializedName("lyrics")
     val lyrics: String
 )
