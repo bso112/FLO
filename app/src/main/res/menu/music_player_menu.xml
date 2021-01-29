@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/play_option"
+        android:icon="@color/white"
+        app:showAsAction="always"
+        android:title="option" />
+    <item
+        android:id="@+id/eq"
+        android:icon="@color/white"
+        app:showAsAction="always"
+        android:title="eq" />
+    <item
+        android:id="@+id/wifi"
+        android:icon="@color/white"
+        app:showAsAction="always"
+        android:title="wifi" />
+    <item
+        android:id="@+id/go_down"
+        android:icon="@color/white"
+        app:showAsAction="always"
+        android:title="go_down" />
+
+</menu>
