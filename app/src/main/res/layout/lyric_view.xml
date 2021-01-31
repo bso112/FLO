@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center"
+    android:background="@color/black"
     >
 
     <TextView
@@ -14,6 +15,7 @@
         android:layout_height="wrap_content"
         android:maxLines="1"
         tools:text = "asdasdasdasd"
+        style="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@color/white"/>
 
     <TextView
@@ -22,5 +24,6 @@
         android:layout_height="wrap_content"
         android:maxLines="1"
         tools:text = "asdasdasdasdasdasd"
+        style="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@color/white"/>
 </LinearLayout>

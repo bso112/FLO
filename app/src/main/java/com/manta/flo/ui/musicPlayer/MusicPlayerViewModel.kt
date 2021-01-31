@@ -13,11 +13,6 @@ class MusicPlayerViewModel @ViewModelInject constructor(
     private val repository: MainRepository
 ) : ViewModel() {
 
-
-    //이렇게만하면 _songLiveData를 외부에서 참조해서 postValue 같은걸 쓸 수 가 있다.
-    //설계상 좋지 않음.
-    // val _songLiveData: MutableLiveData<SongResponse> = MutableLiveData()
-
     private val _songLiveData: MutableLiveData<SongResponse> = MutableLiveData()
     val songLiveData: LiveData<SongResponse>
         get() = _songLiveData
