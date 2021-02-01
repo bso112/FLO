@@ -21,9 +21,7 @@ class LyricView(context: Context, attrs: AttributeSet) : LinearLayout(context, a
 
     private val mView: View = View.inflate(context, R.layout.lyric_view, this)
 
-    //가사 전문
     private val mLyrics = mutableListOf<Lyric>()
-
 
     private val mTopLyric: TextView by lazy {
         mView.findViewById<TextView>(R.id.tv_top)
@@ -31,6 +29,7 @@ class LyricView(context: Context, attrs: AttributeSet) : LinearLayout(context, a
     private val mDownLyric: TextView by lazy {
         mView.findViewById<TextView>(R.id.tv_down)
     }
+
 
     private var mNextLyricTimeStamp: Int = 0;
     private var mNextLyricIndex = 0;
