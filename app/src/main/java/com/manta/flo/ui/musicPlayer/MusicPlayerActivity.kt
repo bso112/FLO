@@ -22,6 +22,9 @@ import kotlinx.coroutines.launch
 class MusicPlayerActivity : AppCompatActivity() {
 
     private val musicPlayerViewModel: MusicPlayerViewModel by viewModels()
+    private val musicPlayerView by lazy{
+        findViewById<MusicPlayerView>(R.id.music_player)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,15 +40,14 @@ class MusicPlayerActivity : AppCompatActivity() {
 
 
         val lyricView = findViewById<LyricView2>(R.id.lyric_view)
-        val musicPlayerView = findViewById<MusicPlayerView>(R.id.music_player)
 
-
-        lyricView.setOnClickListener {
+        lyricView.getChildAt(0).setOnClickListener {
             Intent(this, LyricActivity::class.java).apply {
                 putExtra(EXTRA_SONGDATA, musicPlayerViewModel.songLiveData.value)
                 startActivity(this)
             }
         }
+
 
         musicPlayerView.setMusicPlayerListener(object : MusicPlayerView.MusicPlayerListener {
             //일정 간격으로 다음가사를 출력해야하는지 확인하고, 변경한다.
@@ -71,7 +73,7 @@ class MusicPlayerActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-
+        musicPlayerView.resetUI()
     }
 
 }

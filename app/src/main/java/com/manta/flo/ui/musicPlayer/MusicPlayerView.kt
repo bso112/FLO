@@ -8,12 +8,10 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.SeekBar
+import androidx.annotation.MainThread
 import androidx.core.content.res.ResourcesCompat
 import com.manta.flo.R
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 
 class MusicPlayerView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
@@ -50,36 +48,13 @@ class MusicPlayerView(context: Context, attrs: AttributeSet) : LinearLayout(cont
 
 
     init {
-        //노래 재생
-        mPlayButton.setOnClickListener {
-            val mediaPlayer = mMediaPlayer ?: return@setOnClickListener;
-            switchPlayButtonImage(mediaPlayer.isPlaying)
+      initUI()
+    }
 
-            if (mediaPlayer.isPlaying) {
-                mediaPlayer.pause()
-            } else {
-                playMusic();
-            }
-        }
-
-        mSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                if (seekBar != null) {
-                    mSeekBar.progress = seekBar.progress
-                    mMediaPlayer?.seekTo(seekBar.progress)
-                    mMusicPlayerListener?.onSeekTo(seekBar.progress)
-                }
-            }
-
-        })
-
-
+    fun resetUI(){
+        mSeekBar.max = mMediaPlayer?.duration ?: 0
+        mSeekBar.progress = mMediaPlayer?.currentPosition ?: 0
+        switchPlayButtonImage()
     }
 
 
@@ -99,8 +74,43 @@ class MusicPlayerView(context: Context, attrs: AttributeSet) : LinearLayout(cont
         showProgress();
     }
 
-    private fun switchPlayButtonImage(isPlaying: Boolean) {
-        if (isPlaying)
+    @MainThread
+    private fun initUI(){
+        //노래 재생
+        mPlayButton.setOnClickListener {
+            val mediaPlayer = mMediaPlayer ?: return@setOnClickListener;
+
+            if (mediaPlayer.isPlaying) {
+                mediaPlayer.pause()
+            } else {
+                playMusic();
+            }
+
+            switchPlayButtonImage()
+        }
+
+        mSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                if (seekBar != null) {
+                    mSeekBar.progress = seekBar.progress
+                    mMediaPlayer?.seekTo(seekBar.progress)
+                    mMusicPlayerListener?.onSeekTo(seekBar.progress)
+                }
+            }
+
+        })
+
+    }
+
+    @MainThread
+    private fun switchPlayButtonImage() {
+        if (mMediaPlayer?.isPlaying ?: false)
             mPlayButton.background = mPauseDrawble
         else
             mPlayButton.background = mPlayDrawble
@@ -120,8 +130,8 @@ class MusicPlayerView(context: Context, attrs: AttributeSet) : LinearLayout(cont
         mMediaPlayer = mMediaPlayer ?: MediaPlayer.create(context, Uri.parse(fileUri)) ?: return
         //음악이 끝날때
         mMediaPlayer!!.setOnCompletionListener { mMusicPlayerListener?.onComplete() }
-        //음악의 총 길이를 Seekbar에 설정
-        mSeekBar.max = mMediaPlayer!!.duration
+
+        resetUI()
 
         if (mMediaPlayer!!.isPlaying) {
             playMusic()

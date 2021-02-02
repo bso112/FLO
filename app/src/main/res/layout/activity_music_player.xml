@@ -87,6 +87,7 @@
             android:id="@+id/lyric_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAlignment="center"
             app:maxVisible = "2"
             app:layout_constraintBottom_toBottomOf="@+id/bottom_banner"
             app:layout_constraintEnd_toEndOf="parent"
