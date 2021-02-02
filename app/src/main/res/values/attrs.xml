@@ -1,3 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <declare-styleable name="LyricView2">
+        <attr name="maxVisible" format="integer" />
+    </declare-styleable>
 </resources>

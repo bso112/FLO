@@ -2,38 +2,33 @@ package com.manta.flo.ui.musicPlayer
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.MainThread
 import androidx.core.content.res.ResourcesCompat
 import com.manta.flo.R
+import com.manta.flo.ui.Lyric
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 
-class Lyric(
-    val timeStampInMs: Int = 0,
-    val lyric: String = ""
-)
+class LyricView2(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
 
-class LyricView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
+    private val mLyricTextViews = mutableListOf<TextView>()
 
-    private val mView: View = View.inflate(context, R.layout.lyric_view, this)
+    private val COLOR_HIGHLIGHT = ResourcesCompat.getColor(resources, R.color.white, context.theme)
+    private val COLOR_DEFAULT = ResourcesCompat.getColor(resources, R.color.gray, context.theme)
 
-    private val mLyrics = mutableListOf<Lyric>()
-
-    private val mTopLyric: TextView by lazy {
-        mView.findViewById<TextView>(R.id.tv_top)
-    }
-    private val mDownLyric: TextView by lazy {
-        mView.findViewById<TextView>(R.id.tv_down)
+    //모든 객체에서 동일
+    companion object {
+        private val mLyrics = mutableListOf<Lyric>()
+        private var mNextLyricTimeStamp: Int = 0;
+        private var mNextLyricIndex = 0;
     }
 
-
-    private var mNextLyricTimeStamp: Int = 0;
-    private var mNextLyricIndex = 0;
-
+    var mMaxVisible: Int = 0
 
     var lyric: String? = null
         set(value) {
@@ -43,11 +38,30 @@ class LyricView(context: Context, attrs: AttributeSet) : LinearLayout(context, a
             field = value;
         }
 
+
+    init {
+        context.theme.obtainStyledAttributes(
+            attrs,
+            R.styleable.LyricView2,
+            0, 0
+        ).apply {
+
+            try {
+                mMaxVisible = getInteger(R.styleable.LyricView2_maxVisible, 0)
+            } finally {
+                recycle()
+            }
+        }
+
+        orientation = VERTICAL
+        gravity = Gravity.CENTER
+    }
+
     /**
      * 사용자에 의해 다른 구간으로 넘어갔을때 사용
      */
-    fun jumpLyricTo(timestamp: Int){
-        var index = findLyricIndex(timestamp)
+    fun jumpLyricTo(timestamp: Int) {
+        val index = findLyricIndex(timestamp)
         setLyric(index);
     }
 
@@ -57,6 +71,7 @@ class LyricView(context: Context, attrs: AttributeSet) : LinearLayout(context, a
     suspend fun showLyric(timestamp: Int) {
         if (timestamp < mNextLyricTimeStamp)
             return;
+
         withContext(Dispatchers.Main) {
             setLyric(mNextLyricIndex)
         }
@@ -65,15 +80,16 @@ class LyricView(context: Context, attrs: AttributeSet) : LinearLayout(context, a
 
     @MainThread
     private fun setLyric(index: Int) {
-        mTopLyric.text = mLyrics[index].lyric
-        mTopLyric.setTextColor(ResourcesCompat.getColor(resources, R.color.white, context.theme))
-        if (index + 1 < mLyrics.size) {
-            mDownLyric.text = mLyrics[index + 1].lyric
-            mDownLyric.setTextColor(ResourcesCompat.getColor(resources, R.color.gray, context.theme))
-        }
-        setNextLyric(index + 1)
-    }
+        if (mLyricTextViews.isEmpty()) return
 
+        for (tv in mLyricTextViews) {
+            tv.setTextColor(COLOR_DEFAULT)
+        }
+        mLyricTextViews[index % mMaxVisible].text = mLyrics[index].lyric
+        mLyricTextViews[index % mMaxVisible].setTextColor(COLOR_HIGHLIGHT)
+        setNextLyric(index + 1)
+
+    }
 
     private fun findLyricIndex(timestamp: Int): Int {
         //binary search
@@ -115,16 +131,29 @@ class LyricView(context: Context, attrs: AttributeSet) : LinearLayout(context, a
         return m * 60 * 1000 + s * 1000 + ms;
     }
 
-    private fun onMusicSet(uri : String){
-        //가사 파싱해서 저장하기
-        parseLyric(uri)
-        //첫번째 가사 보여주기
-        setLyric(0)
+    private fun onMusicSet(lyric: String) {
+        if(mLyrics.isEmpty()){
+            //가사 파싱해서 저장하기
+            parseLyric(lyric)
+        }
+        //가사 텍스트뷰 생성하기
+        createLyricTextViews()
     }
 
-    private fun setNextLyric(nextIndex : Int){
-        val next = Math.min(mLyrics.size -1 , nextIndex)
+    private fun createLyricTextViews() {
+        mMaxVisible = if (mMaxVisible == 0) mLyrics.size else mMaxVisible
+        for (i in 0 until mMaxVisible) {
+            val textView = View.inflate(context, R.layout.item_lyric, null) as TextView
+            textView.text = mLyrics[i].lyric
+            addView(textView)
+            mLyricTextViews.add(textView)
+        }
+    }
+
+    private fun setNextLyric(nextIndex: Int) {
+        val next = Math.min(mLyrics.size - 1, nextIndex)
         mNextLyricIndex = next;
         mNextLyricTimeStamp = mLyrics[next].timeStampInMs;
     }
+
 }

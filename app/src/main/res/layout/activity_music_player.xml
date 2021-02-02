@@ -83,10 +83,11 @@
         </androidx.cardview.widget.CardView>
 
 
-        <com.manta.flo.ui.musicPlayer.LyricView
+        <com.manta.flo.ui.musicPlayer.LyricView2
             android:id="@+id/lyric_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:maxVisible = "2"
             app:layout_constraintBottom_toBottomOf="@+id/bottom_banner"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -126,7 +127,7 @@
             app:layout_constraintBottom_toTopOf="@+id/bottom_banner"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout"
             app:layout_constraintVertical_bias="1.0"
-            app:music_uri="@{viewModel.songLiveData.fileUri}" />
+            app:file_uri ="@{viewModel.songLiveData.fileUri}"/>
 
         <RelativeLayout
             android:id="@+id/bottom_banner"

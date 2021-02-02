@@ -1,6 +1,7 @@
 package com.manta.flo.model
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 
 data class SongResponse(
@@ -18,6 +19,6 @@ data class SongResponse(
     val fileUri: String,
     @SerializedName("lyrics")
     val lyrics: String
-)
+) : Serializable
 
 

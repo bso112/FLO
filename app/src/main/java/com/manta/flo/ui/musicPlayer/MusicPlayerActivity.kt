@@ -1,13 +1,17 @@
 package com.manta.flo.ui.musicPlayer
 
 import android.content.Intent
+import android.media.MediaPlayer
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import com.manta.flo.R
 import com.manta.flo.databinding.ActivityMusicPlayerBinding
 import com.manta.flo.ui.lyric.LyricActivity
+import com.manta.flo.utill.Constants.EXTRA_SONGDATA
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,16 +35,19 @@ class MusicPlayerActivity : AppCompatActivity() {
 
         musicPlayerViewModel.getSongData()
 
-        val lyricView = findViewById<LyricView>(R.id.lyric_view)
+
+        val lyricView = findViewById<LyricView2>(R.id.lyric_view)
         val musicPlayerView = findViewById<MusicPlayerView>(R.id.music_player)
 
+
         lyricView.setOnClickListener {
-            Intent(this, LyricActivity::class.java).apply{
+            Intent(this, LyricActivity::class.java).apply {
+                putExtra(EXTRA_SONGDATA, musicPlayerViewModel.songLiveData.value)
                 startActivity(this)
             }
         }
 
-        musicPlayerView.setMusicPlayerListener(object : MusicPlayerView.MusicPlayerListener{
+        musicPlayerView.setMusicPlayerListener(object : MusicPlayerView.MusicPlayerListener {
             //일정 간격으로 다음가사를 출력해야하는지 확인하고, 변경한다.
             override fun onPlay() {
                 CoroutineScope(Dispatchers.Default).launch {
@@ -58,6 +65,7 @@ class MusicPlayerActivity : AppCompatActivity() {
                 lyricView.jumpLyricTo(msec)
             }
         })
+
 
     }
 
