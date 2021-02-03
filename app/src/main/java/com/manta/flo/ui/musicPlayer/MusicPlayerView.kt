@@ -47,18 +47,16 @@ class MusicPlayerView(context: Context, attrs: AttributeSet) : LinearLayout(cont
     }
 
 
-
-
     @MainThread
     private fun initUI() {
         //노래 재생
         mPlayButton.setOnClickListener {
             MusicPlayer.ifMediaPlayerNotNull {
-                if (it.isPlaying) {
+                if (it.isPlaying)
                     MusicPlayer.pause()
-                } else {
+                else
                     MusicPlayer.start()
-                }
+
             }
             switchPlayButtonImage()
         }
@@ -73,7 +71,7 @@ class MusicPlayerView(context: Context, attrs: AttributeSet) : LinearLayout(cont
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 if (seekBar != null) {
                     mSeekBar.progress = seekBar.progress
-                    MusicPlayer.seekTo (seekBar.progress)
+                    MusicPlayer.seekTo(seekBar.progress)
                 }
             }
 

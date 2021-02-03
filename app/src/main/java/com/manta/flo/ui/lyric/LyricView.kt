@@ -1,4 +1,4 @@
-package com.manta.flo.ui.musicPlayer
+package com.manta.flo.ui.lyric
 
 import android.content.Context
 import android.util.AttributeSet
@@ -11,7 +11,6 @@ import android.widget.ScrollView
 import android.widget.TextView
 import androidx.annotation.MainThread
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.marginBottom
 import com.manta.flo.R
 import com.manta.flo.ui.Lyric
 import com.manta.flo.ui.MusicPlayer
@@ -19,7 +18,7 @@ import com.manta.flo.ui.MusicPlayerListener
 import kotlinx.coroutines.*
 
 
-class LyricView2(context: Context, attrs: AttributeSet) : ScrollView(context, attrs), MusicPlayerListener {
+class LyricView(context: Context, attrs: AttributeSet) : ScrollView(context, attrs), MusicPlayerListener {
 
     private val mLyricTextViews = mutableListOf<TextView>()
     private val mRoot = LinearLayout(context)
@@ -120,9 +119,6 @@ class LyricView2(context: Context, attrs: AttributeSet) : ScrollView(context, at
     }
 
     private fun SmoothScrollToView(view: View) {
-        val textViewPos = IntArray(2)
-        view.getLocationOnScreen(textViewPos)
-
         var mat = DisplayMetrics()
         (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.getMetrics(mat);
 

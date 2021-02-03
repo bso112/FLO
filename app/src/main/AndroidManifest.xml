@@ -12,11 +12,10 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.FLO">
+        android:theme="@style/Theme.NoActionBar.FLO">
         <activity
-            android:name=".ui.lyric.LyricActivity"
-            android:theme="@style/Theme.NoActionBar.FLO" />
-        <activity android:name=".ui.musicPlayer.MusicPlayerActivity" />
+            android:name=".ui.lyric.LyricActivity" />
+        <activity android:name=".ui.musicPlayer.MusicPlayerActivity" android:theme="@style/Theme.FLO" />
         <activity android:name=".ui.SplashActivity" android:noHistory="true">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />

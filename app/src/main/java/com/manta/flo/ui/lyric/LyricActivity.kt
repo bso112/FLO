@@ -4,17 +4,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.lifecycleScope
 import com.manta.flo.R
 import com.manta.flo.databinding.ActivityLyricBinding
 import com.manta.flo.model.SongResponse
-import com.manta.flo.ui.musicPlayer.LyricView2
-import com.manta.flo.ui.musicPlayer.MusicPlayerView
 import com.manta.flo.utill.Constants.EXTRA_SONGDATA
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class LyricActivity : AppCompatActivity() {
 
@@ -41,6 +34,15 @@ class LyricActivity : AppCompatActivity() {
                 else
                     ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_playlist_play_24, theme)
 
+        }
+
+        mBinding.lyricView.getChildAt(0).setOnClickListener {
+            if(!mBinding.lyricView.mSelectMode)
+                finish()
+        }
+
+        mBinding.btnClose.setOnClickListener {
+            finish()
         }
 
 

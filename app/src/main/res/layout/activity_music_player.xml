@@ -83,7 +83,7 @@
         </androidx.cardview.widget.CardView>
 
 
-        <com.manta.flo.ui.musicPlayer.LyricView2
+        <com.manta.flo.ui.lyric.LyricView
             android:id="@+id/lyric_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
