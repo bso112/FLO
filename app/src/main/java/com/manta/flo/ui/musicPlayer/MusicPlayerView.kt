@@ -19,14 +19,10 @@ class MusicPlayerView(context: Context, attrs: AttributeSet) : LinearLayout(cont
     private val mView: View = View.inflate(context, R.layout.music_player_view, this)
     private val mSeekBar = mView.findViewById<SeekBar>(R.id.seekbar_music)
     private val mPlayButton = mView.findViewById<ImageButton>(R.id.btn_play)
-    private var mMusicPlayerListener: MusicPlayerListener? = null;
 
     private val mPauseDrawble = ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_pause_24, context.theme)
     private val mPlayDrawble = ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_play_arrow_24, context.theme)
 
-    companion object {
-        private var mMediaPlayer: MediaPlayer? = null
-    }
 
     var file_uri : String? = null
         set(value){
@@ -34,17 +30,6 @@ class MusicPlayerView(context: Context, attrs: AttributeSet) : LinearLayout(cont
                 onSetMusic(value)
             field = value
         }
-
-
-    interface MusicPlayerListener {
-        fun onPlay()
-        fun onComplete()
-
-        /**
-         * 사용자에 의해 특정 구간으로 점프했을때
-         */
-        fun onSeekTo(msec: Int)
-    }
 
 
     init {

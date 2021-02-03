@@ -3,6 +3,7 @@ package com.manta.flo.ui.lyric
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import com.manta.flo.R
 import com.manta.flo.databinding.ActivityLyricBinding
 import com.manta.flo.model.SongResponse
@@ -15,28 +16,30 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class LyricActivity : AppCompatActivity() {
+
+    private val mBinding by lazy {
+        DataBindingUtil.setContentView<ActivityLyricBinding>(this, R.layout.activity_lyric)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lyric)
 
         val songData = intent.getSerializableExtra(EXTRA_SONGDATA) as? SongResponse ?: return
 
-        DataBindingUtil.setContentView<ActivityLyricBinding>(this, R.layout.activity_lyric).also {
-            it.lifecycleOwner = this
-            it.song = songData
+        mBinding.lifecycleOwner = this
+        mBinding.song = songData
+
+
+        mBinding.btnLyricSelectMode.setOnClickListener {
+            mBinding.lyricView.setSelectMode()
         }
 
-        val lyricView = findViewById<LyricView2>(R.id.lyric_view)
-        val musicPlayerView = findViewById<MusicPlayerView>(R.id.music_player)
-
-        musicPlayerView.setMusicPlayerListener(object : MusicPlayerView.MusicPlayerListener {
+        mBinding.musicPlayer.setMusicPlayerListener(object : MusicPlayerView.MusicPlayerListener {
             //일정 간격으로 다음가사를 출력해야하는지 확인하고, 변경한다.
             override fun onPlay() {
-                CoroutineScope(Dispatchers.Default).launch {
-                    while (musicPlayerView.isPlaying()) {
-                        lyricView.showLyric(musicPlayerView.getTimeStamp())
-                        delay(100)
-                    }
+                lifecycleScope.launch {
+                    showLyric()
                 }
             }
 
@@ -44,13 +47,18 @@ class LyricActivity : AppCompatActivity() {
             }
 
             override fun onSeekTo(msec: Int) {
-                lyricView.jumpLyricTo(msec)
+                mBinding.lyricView.jumpLyricTo(msec)
             }
         })
 
     }
 
-
+    private suspend fun showLyric() {
+        while (mBinding.musicPlayer.isPlaying()) {
+            mBinding.lyricView.showLyric(mBinding.musicPlayer.getTimeStamp())
+            delay(100)
+        }
+    }
 
 
 }

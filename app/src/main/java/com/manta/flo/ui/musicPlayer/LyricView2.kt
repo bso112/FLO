@@ -3,6 +3,7 @@ package com.manta.flo.ui.musicPlayer
 import android.content.Context
 import android.util.AttributeSet
 import android.util.DisplayMetrics
+import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
 import android.widget.LinearLayout
@@ -30,6 +31,7 @@ class LyricView2(context: Context, attrs: AttributeSet) : ScrollView(context, at
         private var mNextLyricIndex = 0;
     }
 
+    private var mSelectMode = false;
     var mMaxVisible: Int = 0
     var lyric: String? = null
         set(value) {
@@ -79,6 +81,9 @@ class LyricView2(context: Context, attrs: AttributeSet) : ScrollView(context, at
         }
     }
 
+    fun setSelectMode() {
+        mSelectMode = !mSelectMode
+    }
 
     @MainThread
     private fun setLyric(index: Int) {
@@ -116,7 +121,7 @@ class LyricView2(context: Context, attrs: AttributeSet) : ScrollView(context, at
         //이것들을 모두 더하면 스크롤할 y좌표가 나온다.
         val scrollY = Math.max(0, (view.y - (mat.heightPixels / 2) + y + statusBarOffsetY).toInt());
 
-        smoothScrollTo(0,  scrollY)
+        smoothScrollTo(0, scrollY)
     }
 
     private fun setNextLyric(nextIndex: Int) {
@@ -176,14 +181,23 @@ class LyricView2(context: Context, attrs: AttributeSet) : ScrollView(context, at
 
     private fun createLyricTextViews() {
         mMaxVisible = if (mMaxVisible == 0) mLyrics.size else mMaxVisible
-        for (i in 0 until mMaxVisible) {
+        repeat(Math.min(mMaxVisible, mLyrics.size)) { i ->
             val textView = View.inflate(context, R.layout.item_lyric, null) as TextView
             textView.text = mLyrics[i].lyric
             textView.textAlignment = textAlignment
+            if(isNotLyricPreview()){
+                textView.setOnClickListener {
+                    if (mSelectMode) {
+                        setLyric(i)
+                    }
+                }
+            }
             mRoot.addView(textView)
             mLyricTextViews.add(textView)
         }
     }
+
+    private fun isNotLyricPreview() = mMaxVisible >= mLyrics.size
 
 
 }
