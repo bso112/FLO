@@ -33,7 +33,6 @@ class MusicPlayerActivity : AppCompatActivity() {
         mBinding.lifecycleOwner = this;
         mBinding.viewModel = musicPlayerViewModel;
 
-
         musicPlayerViewModel.getSongData()
 
 
@@ -45,31 +44,9 @@ class MusicPlayerActivity : AppCompatActivity() {
         }
 
 
-        mBinding.musicPlayer.setMusicPlayerListener(object : MusicPlayerView.MusicPlayerListener {
-            //일정 간격으로 다음가사를 출력해야하는지 확인하고, 변경한다.
-            override fun onPlay() {
-                lifecycleScope.launch {
-                    showLyric()
-                }
-            }
-
-            override fun onComplete() {
-            }
-
-            override fun onSeekTo(msec: Int) {
-                mBinding.lyricView.jumpLyricTo(msec)
-            }
-        })
     }
 
 
-
-    private suspend fun showLyric() {
-        while (mBinding.musicPlayer.isPlaying()) {
-            mBinding.lyricView.showLyric(mBinding.musicPlayer.getTimeStamp())
-            delay(100)
-        }
-    }
 
 
 }

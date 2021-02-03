@@ -1,6 +1,7 @@
 package com.manta.flo.ui
 
 interface MusicPlayerListener {
-
-    fun OnSeekTo(ms : Int)
+    fun onMusicSeekTo(ms : Int){}
+    fun onMusicStart(){}
+    fun onMusicPause(){}
 }

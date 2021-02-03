@@ -3,7 +3,6 @@ package com.manta.flo.ui.musicPlayer
 import android.content.Context
 import android.util.AttributeSet
 import android.util.DisplayMetrics
-import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
 import android.widget.LinearLayout
@@ -13,11 +12,12 @@ import androidx.annotation.MainThread
 import androidx.core.content.res.ResourcesCompat
 import com.manta.flo.R
 import com.manta.flo.ui.Lyric
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.manta.flo.ui.MusicPlayer
+import com.manta.flo.ui.MusicPlayerListener
+import kotlinx.coroutines.*
 
 
-class LyricView2(context: Context, attrs: AttributeSet) : ScrollView(context, attrs) {
+class LyricView2(context: Context, attrs: AttributeSet) : ScrollView(context, attrs), MusicPlayerListener {
 
     private val mLyricTextViews = mutableListOf<TextView>()
     private val mRoot = LinearLayout(context)
@@ -58,13 +58,24 @@ class LyricView2(context: Context, attrs: AttributeSet) : ScrollView(context, at
 
         mRoot.orientation = LinearLayout.VERTICAL
         addView(mRoot)
+
+
     }
 
 
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        MusicPlayer.register(this)
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        MusicPlayer.unRegister(this)
+    }
     /**
      * 사용자에 의해 다른 구간으로 넘어갔을때 사용
      */
-    fun jumpLyricTo(timestamp: Int) {
+    private fun jumpLyricTo(timestamp: Int) {
         val index = findLyricIndex(timestamp)
         setLyric(index);
     }
@@ -72,7 +83,7 @@ class LyricView2(context: Context, attrs: AttributeSet) : ScrollView(context, at
     /**
      * 순차적으로 음악이 플레이 될때 사용
      */
-    suspend fun showLyric(timestamp: Int) {
+    private suspend fun showLyric(timestamp: Int) {
         if (timestamp < mNextLyricTimeStamp)
             return;
 
@@ -185,7 +196,7 @@ class LyricView2(context: Context, attrs: AttributeSet) : ScrollView(context, at
             val textView = View.inflate(context, R.layout.item_lyric, null) as TextView
             textView.text = mLyrics[i].lyric
             textView.textAlignment = textAlignment
-            if(isNotLyricPreview()){
+            if (isNotLyricPreview()) {
                 textView.setOnClickListener {
                     if (mSelectMode) {
                         setLyric(i)
@@ -200,4 +211,20 @@ class LyricView2(context: Context, attrs: AttributeSet) : ScrollView(context, at
     private fun isNotLyricPreview() = mMaxVisible >= mLyrics.size
 
 
+    override fun onMusicStart() {
+        super.onMusicStart()
+        MusicPlayer.ifMediaPlayerNotNull {
+            GlobalScope.launch {
+                while (it.isPlaying) {
+                    showLyric(it.currentPosition)
+                    delay(500)
+                }
+            }
+        }
+    }
+
+    override fun onMusicSeekTo(ms: Int) {
+        super.onMusicSeekTo(ms)
+        jumpLyricTo(ms)
+    }
 }
