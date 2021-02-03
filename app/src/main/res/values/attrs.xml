@@ -2,5 +2,6 @@
 <resources>
     <declare-styleable name="LyricView2">
         <attr name="maxVisible" format="integer" />
+        <attr name="marginBtwLine" format="dimension" />
     </declare-styleable>
 </resources>

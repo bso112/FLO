@@ -47,11 +47,6 @@ class MusicPlayerView(context: Context, attrs: AttributeSet) : LinearLayout(cont
     }
 
 
-    fun resetUI() {
-        mSeekBar.max = MusicPlayer.mMediaPlayer?.duration ?: 0
-        mSeekBar.progress = MusicPlayer.mMediaPlayer?.currentPosition ?: 0
-        switchPlayButtonImage()
-    }
 
 
     @MainThread
@@ -99,7 +94,9 @@ class MusicPlayerView(context: Context, attrs: AttributeSet) : LinearLayout(cont
 
     private fun onSetMusic(fileUri: String) {
         MusicPlayer.setMusic(context, fileUri)
-        resetUI()
+        mSeekBar.max = MusicPlayer.mMediaPlayer?.duration ?: 0
+        mSeekBar.progress = MusicPlayer.mMediaPlayer?.currentPosition ?: 0
+        switchPlayButtonImage()
     }
 
     override fun onMusicStart() {
@@ -120,6 +117,10 @@ class MusicPlayerView(context: Context, attrs: AttributeSet) : LinearLayout(cont
         switchPlayButtonImage()
     }
 
+    override fun onMusicSeekTo(ms: Int) {
+        super.onMusicSeekTo(ms)
+        mSeekBar.progress = ms
+    }
 }
 
 

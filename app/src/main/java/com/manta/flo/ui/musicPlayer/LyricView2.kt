@@ -4,12 +4,14 @@ import android.content.Context
 import android.util.AttributeSet
 import android.util.DisplayMetrics
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
 import androidx.annotation.MainThread
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.marginBottom
 import com.manta.flo.R
 import com.manta.flo.ui.Lyric
 import com.manta.flo.ui.MusicPlayer
@@ -27,11 +29,14 @@ class LyricView2(context: Context, attrs: AttributeSet) : ScrollView(context, at
     //모든 객체에서 동일
     companion object {
         private val mLyrics = mutableListOf<Lyric>()
-        private var mNextLyricTimeStamp: Int = 0;
-        private var mNextLyricIndex = 0;
     }
 
-    private var mSelectMode = false;
+    private var mNextLyricTimeStamp: Int = 0;
+    private var mNextLyricIndex = 0;
+    var mSelectMode = false
+        private set
+
+    var mMarginBtwLine = 0
     var mMaxVisible: Int = 0
     var lyric: String? = null
         set(value) {
@@ -51,6 +56,7 @@ class LyricView2(context: Context, attrs: AttributeSet) : ScrollView(context, at
 
             try {
                 mMaxVisible = getInteger(R.styleable.LyricView2_maxVisible, 0)
+                mMarginBtwLine = getDimensionPixelSize(R.styleable.LyricView2_marginBtwLine, 0)
             } finally {
                 recycle()
             }
@@ -72,6 +78,7 @@ class LyricView2(context: Context, attrs: AttributeSet) : ScrollView(context, at
         super.onDetachedFromWindow()
         MusicPlayer.unRegister(this)
     }
+
     /**
      * 사용자에 의해 다른 구간으로 넘어갔을때 사용
      */
@@ -159,7 +166,7 @@ class LyricView2(context: Context, attrs: AttributeSet) : ScrollView(context, at
         }
 
         //못찾았다. timestamp보다 한단계 작은 원소의 인덱스를 리턴한다.
-        return Math.max(end, 0);
+        return Math.max(end-1, 0);
     }
 
 
@@ -188,6 +195,12 @@ class LyricView2(context: Context, attrs: AttributeSet) : ScrollView(context, at
         }
         //가사 텍스트뷰 생성하기
         createLyricTextViews()
+
+
+        MusicPlayer.ifMediaPlayerNotNull {
+            onMusicStart()
+            jumpLyricTo(it.currentPosition)
+        }
     }
 
     private fun createLyricTextViews() {
@@ -196,10 +209,14 @@ class LyricView2(context: Context, attrs: AttributeSet) : ScrollView(context, at
             val textView = View.inflate(context, R.layout.item_lyric, null) as TextView
             textView.text = mLyrics[i].lyric
             textView.textAlignment = textAlignment
+            textView.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).also {
+                it.setMargins(0,0,0,mMarginBtwLine)
+            }
             if (isNotLyricPreview()) {
                 textView.setOnClickListener {
                     if (mSelectMode) {
                         setLyric(i)
+                        MusicPlayer.seekTo(mLyrics[i].timeStampInMs)
                     }
                 }
             }
@@ -226,5 +243,10 @@ class LyricView2(context: Context, attrs: AttributeSet) : ScrollView(context, at
     override fun onMusicSeekTo(ms: Int) {
         super.onMusicSeekTo(ms)
         jumpLyricTo(ms)
+    }
+
+    override fun onMusicChange() {
+        super.onMusicChange()
+        mLyrics.clear()
     }
 }

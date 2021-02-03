@@ -9,6 +9,8 @@ object MusicPlayer {
     var mMediaPlayer: MediaPlayer? = null
         private set;
 
+    var currentUri: String = ""
+
     private val mListeners = mutableListOf<MusicPlayerListener>()
 
     fun ifMediaPlayerNotNull(function: (MediaPlayer) -> Unit) {
@@ -17,28 +19,37 @@ object MusicPlayer {
     }
 
     fun setMusic(context: Context, uri: String) {
-        if (mMediaPlayer == null)
+        if (mMediaPlayer == null) {
             mMediaPlayer = MediaPlayer.create(context, Uri.parse(uri))
+        } else if (currentUri != uri) {
+            mMediaPlayer!!.reset()
+            mMediaPlayer!!.setDataSource(context, Uri.parse(uri))
+            mMediaPlayer!!.prepare()
+            mListeners.forEach { listener -> listener.onMusicChange() }
+        }
+        currentUri = uri
+
     }
 
 
     fun seekTo(ms: Int) {
-        ifMediaPlayerNotNull {
-            it.seekTo(ms)
+        if (mMediaPlayer != null) {
+            mMediaPlayer!!.seekTo(ms)
             mListeners.forEach { listener -> listener.onMusicSeekTo(ms) }
         }
+
     }
 
     fun start() {
-        ifMediaPlayerNotNull {
-            it.start()
+        if (mMediaPlayer != null) {
+            mMediaPlayer!!.start()
             mListeners.forEach { listener -> listener.onMusicStart() }
         }
     }
 
     fun pause() {
-        ifMediaPlayerNotNull {
-            it.pause()
+        if (mMediaPlayer != null) {
+            mMediaPlayer!!.pause()
             mListeners.forEach { listener -> listener.onMusicPause() }
         }
     }

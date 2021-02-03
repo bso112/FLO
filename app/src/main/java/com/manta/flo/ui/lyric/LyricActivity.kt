@@ -2,6 +2,7 @@ package com.manta.flo.ui.lyric
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.manta.flo.R
@@ -33,6 +34,13 @@ class LyricActivity : AppCompatActivity() {
 
         mBinding.btnLyricSelectMode.setOnClickListener {
             mBinding.lyricView.setSelectMode()
+
+            mBinding.btnLyricSelectMode.background =
+                if(mBinding.lyricView.mSelectMode)
+                    ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_playlist_play_selected_24, theme)
+                else
+                    ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_playlist_play_24, theme)
+
         }
 
 
