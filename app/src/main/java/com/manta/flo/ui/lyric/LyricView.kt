@@ -3,7 +3,6 @@ package com.manta.flo.ui.lyric
 import android.content.Context
 import android.util.AttributeSet
 import android.util.DisplayMetrics
-import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -25,10 +24,10 @@ class LyricView(context: Context, attrs: AttributeSet) : ScrollView(context, att
     private val mRoot = LinearLayout(context)
     private val COLOR_HIGHLIGHT = ResourcesCompat.getColor(resources, R.color.white, context.theme)
     private val COLOR_DEFAULT = ResourcesCompat.getColor(resources, R.color.gray, context.theme)
-    private val LYRIC_HIGHLIGHT_BEFORE_MS = 400
+    private val LYRIC_HIGHLIGHT_BEFORE_MS = 500
     private val LYRIC_SCROLL_AFTER_MS = 200L
 
-    private var showLyricCoroutineJob : Job? = null
+    private var showLyricCoroutineJob: Job? = null
 
     //모든 객체에서 동일
     companion object {
@@ -97,7 +96,7 @@ class LyricView(context: Context, attrs: AttributeSet) : ScrollView(context, att
                 setLyric(-1)
                 return@ifMediaPlayerNotNull
             }
-            setLyric(findLyricIndex(timestamp));
+            setLyric(findLyricIndex(timestamp), false);
         }
     }
 
@@ -117,8 +116,9 @@ class LyricView(context: Context, attrs: AttributeSet) : ScrollView(context, att
         mSelectMode = !mSelectMode
     }
 
+
     @MainThread
-    private fun setLyric(index: Int) {
+    private fun setLyric(index: Int, isSmooth: Boolean = true) {
         if (mLyricTextViews.isEmpty() || mLyrics.isEmpty())
             return
 
@@ -130,11 +130,12 @@ class LyricView(context: Context, attrs: AttributeSet) : ScrollView(context, att
             mLyricTextViews[index].text = mLyrics[index].lyric
             mLyricTextViews[index].setTextColor(COLOR_HIGHLIGHT)
 
+
             GlobalScope.launch {
                 if (isNotLyricPreview())
-                    smoothScrollToView(mLyricTextViews[index])
+                    scrollToView(mLyricTextViews[index], isSmooth)
                 else
-                    smoothScrollToView2(mLyricTextViews[index])
+                    scrollToView2(mLyricTextViews[index], isSmooth)
             }
         }
 
@@ -142,13 +143,19 @@ class LyricView(context: Context, attrs: AttributeSet) : ScrollView(context, att
 
     }
 
-    private suspend fun smoothScrollToView2(view: View) {
-        delay(LYRIC_SCROLL_AFTER_MS)
-        smoothScrollTo(0, view.y.toInt())
+
+    private suspend fun scrollToView2(view: View, isSmooth: Boolean) {
+        if (isSmooth) {
+            delay(LYRIC_SCROLL_AFTER_MS)
+            smoothScrollTo(0, view.y.toInt())
+        } else
+            scrollTo(0, view.y.toInt())
     }
 
-    private suspend fun smoothScrollToView(view: View) {
-        delay(LYRIC_SCROLL_AFTER_MS)
+    private suspend fun scrollToView(view: View, isSmooth: Boolean) {
+        if (isSmooth)
+            delay(LYRIC_SCROLL_AFTER_MS)
+
         var mat = DisplayMetrics()
         (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.getMetrics(mat);
 
@@ -165,7 +172,10 @@ class LyricView(context: Context, attrs: AttributeSet) : ScrollView(context, att
         //statusBarOffsetY : 상태바의 y 길이
         val scrollY = Math.max(0, ((view.y + y) - (mat.heightPixels / 2) + statusBarOffsetY).toInt());
 
-        smoothScrollTo(0, scrollY)
+        if (isSmooth)
+            smoothScrollTo(0, scrollY)
+        else
+            scrollTo(0, scrollY)
     }
 
     private fun setNextLyric(nextIndex: Int) {
@@ -192,7 +202,7 @@ class LyricView(context: Context, attrs: AttributeSet) : ScrollView(context, att
         }
 
         //못찾았다. timestamp보다 한단계 작은 원소의 인덱스를 리턴한다.
-        return Math.max(end - 1, 0);
+        return Math.max(end, 0);
     }
 
 
