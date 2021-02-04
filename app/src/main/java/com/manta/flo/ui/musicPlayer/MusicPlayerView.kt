@@ -23,6 +23,7 @@ class MusicPlayerView(context: Context, attrs: AttributeSet) : LinearLayout(cont
     private val mPauseDrawble = ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_pause_24, context.theme)
     private val mPlayDrawble = ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_play_arrow_24, context.theme)
 
+    private var mSetProgressCoroutineJob : Job? = null
 
     var file_uri: String? = null
         set(value) {
@@ -39,11 +40,13 @@ class MusicPlayerView(context: Context, attrs: AttributeSet) : LinearLayout(cont
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         MusicPlayer.register(this)
+        mSetProgressCoroutineJob?.start()
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         MusicPlayer.unRegister(this)
+        mSetProgressCoroutineJob?.cancel()
     }
 
 
@@ -100,7 +103,7 @@ class MusicPlayerView(context: Context, attrs: AttributeSet) : LinearLayout(cont
     override fun onMusicStart() {
         super.onMusicStart()
         MusicPlayer.ifMediaPlayerNotNull {
-            GlobalScope.launch {
+            mSetProgressCoroutineJob = GlobalScope.launch {
                 while (it.isPlaying) {
                     mSeekBar.progress = it.currentPosition
                     delay(1000)

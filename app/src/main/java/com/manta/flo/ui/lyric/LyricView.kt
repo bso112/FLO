@@ -25,6 +25,10 @@ class LyricView(context: Context, attrs: AttributeSet) : ScrollView(context, att
     private val mRoot = LinearLayout(context)
     private val COLOR_HIGHLIGHT = ResourcesCompat.getColor(resources, R.color.white, context.theme)
     private val COLOR_DEFAULT = ResourcesCompat.getColor(resources, R.color.gray, context.theme)
+    private val LYRIC_HIGHLIGHT_BEFORE_MS = 400
+    private val LYRIC_SCROLL_AFTER_MS = 200L
+
+    private var showLyricCoroutineJob : Job? = null
 
     //모든 객체에서 동일
     companion object {
@@ -72,11 +76,13 @@ class LyricView(context: Context, attrs: AttributeSet) : ScrollView(context, att
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         MusicPlayer.register(this)
+        showLyricCoroutineJob?.start()
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         MusicPlayer.unRegister(this)
+        showLyricCoroutineJob?.cancel()
     }
 
     /**
@@ -99,7 +105,7 @@ class LyricView(context: Context, attrs: AttributeSet) : ScrollView(context, att
      * 순차적으로 음악이 플레이 될때 사용
      */
     private suspend fun showLyric(timestamp: Int) {
-        if (timestamp < mNextLyricTimeStamp)
+        if (timestamp < mNextLyricTimeStamp - LYRIC_HIGHLIGHT_BEFORE_MS)
             return;
 
         withContext(Dispatchers.Main) {
@@ -124,21 +130,25 @@ class LyricView(context: Context, attrs: AttributeSet) : ScrollView(context, att
             mLyricTextViews[index].text = mLyrics[index].lyric
             mLyricTextViews[index].setTextColor(COLOR_HIGHLIGHT)
 
-            if (isNotLyricPreview())
-                smoothScrollToView(mLyricTextViews[index])
-            else
-                smoothScrollToView2(mLyricTextViews[index])
+            GlobalScope.launch {
+                if (isNotLyricPreview())
+                    smoothScrollToView(mLyricTextViews[index])
+                else
+                    smoothScrollToView2(mLyricTextViews[index])
+            }
         }
 
         setNextLyric(index + 1)
 
     }
 
-    private fun smoothScrollToView2(view: View) {
+    private suspend fun smoothScrollToView2(view: View) {
+        delay(LYRIC_SCROLL_AFTER_MS)
         smoothScrollTo(0, view.y.toInt())
     }
 
-    private fun smoothScrollToView(view: View) {
+    private suspend fun smoothScrollToView(view: View) {
+        delay(LYRIC_SCROLL_AFTER_MS)
         var mat = DisplayMetrics()
         (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.getMetrics(mat);
 
@@ -244,17 +254,14 @@ class LyricView(context: Context, attrs: AttributeSet) : ScrollView(context, att
 
     }
 
-    fun spToPx(sp: Float, context: Context): Int {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.resources.displayMetrics).toInt()
-    }
 
     private fun isNotLyricPreview() = mMaxVisible >= mLyrics.size
-
 
     override fun onMusicStart() {
         super.onMusicStart()
         MusicPlayer.ifMediaPlayerNotNull {
-            GlobalScope.launch {
+            showLyricCoroutineJob?.cancel()
+            showLyricCoroutineJob = GlobalScope.launch {
                 while (it.isPlaying) {
                     showLyric(it.currentPosition)
                     delay(500)
