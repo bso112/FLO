@@ -35,6 +35,8 @@ class MusicPlayerActivity : AppCompatActivity() {
 
         musicPlayerViewModel.getSongData()
 
+        mBinding.musicPlayer.registerLifecycleOwner(lifecycle)
+        mBinding.lyricView.registerLifecycleOwner(lifecycle)
 
         mBinding.lyricView.getChildAt(0).setOnClickListener {
             Intent(this, LyricActivity::class.java).apply {

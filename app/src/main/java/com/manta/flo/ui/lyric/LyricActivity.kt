@@ -25,6 +25,9 @@ class LyricActivity : AppCompatActivity() {
         mBinding.song = songData
 
 
+        mBinding.musicPlayer.registerLifecycleOwner(lifecycle)
+        mBinding.lyricView.registerLifecycleOwner(lifecycle)
+
         mBinding.btnLyricSelectMode.setOnClickListener {
             mBinding.lyricView.setSelectMode()
 

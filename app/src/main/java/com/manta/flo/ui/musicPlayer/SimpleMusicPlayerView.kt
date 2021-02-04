@@ -17,13 +17,13 @@ import com.manta.flo.ui.MusicPlayerListener
 import kotlinx.coroutines.*
 
 
-class MusicPlayerView(context: Context, attrs: AttributeSet) :
+class SimpleMusicPlayerView(context: Context, attrs: AttributeSet) :
     LinearLayout(context, attrs),
     MusicPlayerListener,
     LifecycleObserver
 {
 
-    private val mView: View = View.inflate(context, R.layout.music_player_view, this)
+    private val mView: View = View.inflate(context, R.layout.simple_music_player_view, this)
     private val mFloSeekbar : FloSeekbar = mView.findViewById<View>(R.id.flo_seekbar) as FloSeekbar
     private val mPlayButton = mView.findViewById<ImageButton>(R.id.btn_play)
     private var lifecycleCoroutineScope: LifecycleCoroutineScope? = null
@@ -103,7 +103,7 @@ class MusicPlayerView(context: Context, attrs: AttributeSet) :
     override fun onMusicStart() {
         super.onMusicStart()
         MusicPlayer.ifMediaPlayerNotNull {
-           lifecycleCoroutineScope?.launch {
+            lifecycleCoroutineScope?.launch {
                 while (it.isPlaying && !mFloSeekbar.isSeekBarPressed()) {
                     mFloSeekbar.setProgress(it.currentPosition)
                     delay(1000)

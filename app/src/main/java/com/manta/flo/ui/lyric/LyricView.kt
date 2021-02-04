@@ -11,6 +11,10 @@ import android.widget.ScrollView
 import android.widget.TextView
 import androidx.annotation.MainThread
 import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleCoroutineScope
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.coroutineScope
 import com.manta.flo.R
 import com.manta.flo.ui.Lyric
 import com.manta.flo.ui.MusicPlayer
@@ -18,7 +22,11 @@ import com.manta.flo.ui.MusicPlayerListener
 import kotlinx.coroutines.*
 
 
-class LyricView(context: Context, attrs: AttributeSet) : ScrollView(context, attrs), MusicPlayerListener {
+class LyricView(context: Context, attrs: AttributeSet) :
+    ScrollView(context, attrs),
+    MusicPlayerListener,
+    LifecycleObserver
+{
 
     private val mLyricTextViews = mutableListOf<TextView>()
     private val mRoot = LinearLayout(context)
@@ -26,8 +34,8 @@ class LyricView(context: Context, attrs: AttributeSet) : ScrollView(context, att
     private val COLOR_DEFAULT = ResourcesCompat.getColor(resources, R.color.gray, context.theme)
     private val LYRIC_HIGHLIGHT_BEFORE_MS = 500
     private val LYRIC_SCROLL_AFTER_MS = 200L
+    private var lifecycleCoroutineScope : LifecycleCoroutineScope? = null
 
-    private var showLyricCoroutineJob: Job? = null
 
     //모든 객체에서 동일
     companion object {
@@ -75,14 +83,19 @@ class LyricView(context: Context, attrs: AttributeSet) : ScrollView(context, att
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         MusicPlayer.register(this)
-        showLyricCoroutineJob?.start()
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         MusicPlayer.unRegister(this)
-        showLyricCoroutineJob?.cancel()
     }
+
+    fun registerLifecycleOwner(lifecycle: Lifecycle){
+        lifecycle.addObserver(this)
+        lifecycleCoroutineScope = lifecycle.coroutineScope
+    }
+
+
 
     /**
      * 사용자에 의해 다른 구간으로 넘어갔을때 사용
@@ -131,7 +144,7 @@ class LyricView(context: Context, attrs: AttributeSet) : ScrollView(context, att
             mLyricTextViews[index].setTextColor(COLOR_HIGHLIGHT)
 
 
-            GlobalScope.launch {
+            lifecycleCoroutineScope?.launch {
                 if (isNotLyricPreview())
                     scrollToView(mLyricTextViews[index], isSmooth)
                 else
@@ -270,8 +283,7 @@ class LyricView(context: Context, attrs: AttributeSet) : ScrollView(context, att
     override fun onMusicStart() {
         super.onMusicStart()
         MusicPlayer.ifMediaPlayerNotNull {
-            showLyricCoroutineJob?.cancel()
-            showLyricCoroutineJob = GlobalScope.launch {
+            lifecycleCoroutineScope?.launch {
                 while (it.isPlaying) {
                     showLyric(it.currentPosition)
                     delay(500)
