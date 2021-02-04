@@ -103,6 +103,7 @@ class MusicPlayerView(context: Context, attrs: AttributeSet) : LinearLayout(cont
     override fun onMusicStart() {
         super.onMusicStart()
         MusicPlayer.ifMediaPlayerNotNull {
+            mSetProgressCoroutineJob?.cancel()
             mSetProgressCoroutineJob = GlobalScope.launch {
                 while (it.isPlaying) {
                     mSeekBar.progress = it.currentPosition
