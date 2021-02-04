@@ -5,4 +5,5 @@ interface MusicPlayerListener {
     fun onMusicStart(){}
     fun onMusicPause(){}
     fun onMusicChange(){}
+    fun onMusicEnd(){}
 }

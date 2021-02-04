@@ -21,6 +21,9 @@ object MusicPlayer {
     fun setMusic(context: Context, uri: String) {
         if (mMediaPlayer == null) {
             mMediaPlayer = MediaPlayer.create(context, Uri.parse(uri))
+            mMediaPlayer!!.setOnCompletionListener {
+                    mListeners.forEach { listener -> listener.onMusicEnd() }
+            }
         } else if (currentUri != uri) {
             mMediaPlayer!!.reset()
             mMediaPlayer!!.setDataSource(context, Uri.parse(uri))
@@ -28,7 +31,6 @@ object MusicPlayer {
             mListeners.forEach { listener -> listener.onMusicChange() }
         }
         currentUri = uri
-
     }
 
 

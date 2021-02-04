@@ -119,6 +119,12 @@ class MusicPlayerView(context: Context, attrs: AttributeSet) : LinearLayout(cont
         super.onMusicSeekTo(ms)
         mSeekBar.progress = ms
     }
+
+    override fun onMusicEnd() {
+        super.onMusicEnd()
+        switchPlayButtonImage()
+        MusicPlayer.seekTo(0)
+    }
 }
 
 

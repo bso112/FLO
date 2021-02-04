@@ -3,6 +3,7 @@ package com.manta.flo.ui.lyric
 import android.content.Context
 import android.util.AttributeSet
 import android.util.DisplayMetrics
+import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -31,7 +32,7 @@ class LyricView(context: Context, attrs: AttributeSet) : ScrollView(context, att
     }
 
     private var mNextLyricTimeStamp: Int = 0;
-    private var mNextLyricIndex = 0;
+    private var mNextLyricIndex = -1;
     var mSelectMode = false
         private set
 
@@ -82,8 +83,16 @@ class LyricView(context: Context, attrs: AttributeSet) : ScrollView(context, att
      * 사용자에 의해 다른 구간으로 넘어갔을때 사용
      */
     private fun jumpLyricTo(timestamp: Int) {
-        val index = findLyricIndex(timestamp)
-        setLyric(index);
+        if (mLyrics.isEmpty()) return;
+        MusicPlayer.ifMediaPlayerNotNull {
+            if (timestamp > it.duration ||
+                timestamp < mLyrics[0].timeStampInMs
+            ) {
+                setLyric(-1)
+                return@ifMediaPlayerNotNull
+            }
+            setLyric(findLyricIndex(timestamp));
+        }
     }
 
     /**
@@ -104,21 +113,32 @@ class LyricView(context: Context, attrs: AttributeSet) : ScrollView(context, att
 
     @MainThread
     private fun setLyric(index: Int) {
-        if (mLyricTextViews.isEmpty()) return
+        if (mLyricTextViews.isEmpty() || mLyrics.isEmpty())
+            return
 
         for (tv in mLyricTextViews) {
             tv.setTextColor(COLOR_DEFAULT)
         }
 
-        mLyricTextViews[index % mMaxVisible].text = mLyrics[index].lyric
-        mLyricTextViews[index % mMaxVisible].setTextColor(COLOR_HIGHLIGHT)
+        if (index >= 0) {
+            mLyricTextViews[index].text = mLyrics[index].lyric
+            mLyricTextViews[index].setTextColor(COLOR_HIGHLIGHT)
 
-        SmoothScrollToView(mLyricTextViews[index % mMaxVisible])
+            if (isNotLyricPreview())
+                smoothScrollToView(mLyricTextViews[index])
+            else
+                smoothScrollToView2(mLyricTextViews[index])
+        }
+
         setNextLyric(index + 1)
 
     }
 
-    private fun SmoothScrollToView(view: View) {
+    private fun smoothScrollToView2(view: View) {
+        smoothScrollTo(0, view.y.toInt())
+    }
+
+    private fun smoothScrollToView(view: View) {
         var mat = DisplayMetrics()
         (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.getMetrics(mat);
 
@@ -129,11 +149,11 @@ class LyricView(context: Context, attrs: AttributeSet) : ScrollView(context, att
             statusBarOffsetY = resources.getDimensionPixelSize(resourceId)
         }
 
-        //view.y - (mat.heightPixels / 2) : 현재 텍스트뷰 위치 ~ 스크린의 절반지점만큼의 길이
+        //(view.y + y) : view의 절대위치 (LyricView의 부모가 rootView일 경우)
         //y : LyricView의 왼쪽위 모서리 위치 즉, 0 ~ y 만큼의 길이
+        //(view.y + y) - (mat.heightPixels / 2) : 현재 텍스트뷰 위치 ~ 스크린의 절반지점만큼의 길이
         //statusBarOffsetY : 상태바의 y 길이
-        //이것들을 모두 더하면 스크롤할 y좌표가 나온다.
-        val scrollY = Math.max(0, (view.y - (mat.heightPixels / 2) + y + statusBarOffsetY).toInt());
+        val scrollY = Math.max(0, ((view.y + y) - (mat.heightPixels / 2) + statusBarOffsetY).toInt());
 
         smoothScrollTo(0, scrollY)
     }
@@ -162,7 +182,7 @@ class LyricView(context: Context, attrs: AttributeSet) : ScrollView(context, att
         }
 
         //못찾았다. timestamp보다 한단계 작은 원소의 인덱스를 리턴한다.
-        return Math.max(end-1, 0);
+        return Math.max(end - 1, 0);
     }
 
 
@@ -199,15 +219,17 @@ class LyricView(context: Context, attrs: AttributeSet) : ScrollView(context, att
         }
     }
 
+
     private fun createLyricTextViews() {
         mMaxVisible = if (mMaxVisible == 0) mLyrics.size else mMaxVisible
-        repeat(Math.min(mMaxVisible, mLyrics.size)) { i ->
+        repeat(mLyrics.size) { i ->
             val textView = View.inflate(context, R.layout.item_lyric, null) as TextView
             textView.text = mLyrics[i].lyric
             textView.textAlignment = textAlignment
             textView.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).also {
-                it.setMargins(0,0,0,mMarginBtwLine)
+                it.setMargins(0, 0, 0, mMarginBtwLine)
             }
+
             if (isNotLyricPreview()) {
                 textView.setOnClickListener {
                     if (mSelectMode) {
@@ -219,6 +241,11 @@ class LyricView(context: Context, attrs: AttributeSet) : ScrollView(context, att
             mRoot.addView(textView)
             mLyricTextViews.add(textView)
         }
+
+    }
+
+    fun spToPx(sp: Float, context: Context): Int {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.resources.displayMetrics).toInt()
     }
 
     private fun isNotLyricPreview() = mMaxVisible >= mLyrics.size
