@@ -28,4 +28,3 @@ git clone https://github.com/bsw112/anime_worldcup.git
 ![alt](readme/슬라이드18.PNG)
 ![alt](readme/슬라이드19.PNG)
 ![alt](readme/슬라이드20.PNG)
-![alt](readme/슬라이드21.PNG)
