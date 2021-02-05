@@ -146,7 +146,7 @@ class LyricView(context: Context, attrs: AttributeSet) :
 
             lifecycleCoroutineScope?.launch {
                 if (isNotLyricPreview())
-                    scrollToView(mLyricTextViews[index], isSmooth)
+                    scrollToViewWhenOverMeddleOfScreen(mLyricTextViews[index], isSmooth)
                 else
                     scrollToView2(mLyricTextViews[index], isSmooth)
             }
@@ -165,7 +165,7 @@ class LyricView(context: Context, attrs: AttributeSet) :
             scrollTo(0, view.y.toInt())
     }
 
-    private suspend fun scrollToView(view: View, isSmooth: Boolean) {
+    private suspend fun scrollToViewWhenOverMeddleOfScreen(view: View, isSmooth: Boolean) {
         if (isSmooth)
             delay(LYRIC_SCROLL_AFTER_MS)
 
@@ -281,7 +281,6 @@ class LyricView(context: Context, attrs: AttributeSet) :
     private fun isNotLyricPreview() = mMaxVisible >= mLyrics.size
 
     override fun onMusicStart() {
-        super.onMusicStart()
         MusicPlayer.ifMediaPlayerNotNull {
             lifecycleCoroutineScope?.launch {
                 while (it.isPlaying) {
@@ -293,12 +292,10 @@ class LyricView(context: Context, attrs: AttributeSet) :
     }
 
     override fun onMusicSeekTo(ms: Int) {
-        super.onMusicSeekTo(ms)
         jumpLyricTo(ms)
     }
 
     override fun onMusicChange() {
-        super.onMusicChange()
         mLyrics.clear()
     }
 }

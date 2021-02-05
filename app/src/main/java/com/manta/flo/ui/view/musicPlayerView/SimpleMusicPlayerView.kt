@@ -102,7 +102,6 @@ class SimpleMusicPlayerView(context: Context, attrs: AttributeSet) :
 
 
     override fun onMusicStart() {
-        super.onMusicStart()
         MusicPlayer.ifMediaPlayerNotNull {
             lifecycleCoroutineScope?.launch {
                 while (it.isPlaying) {
@@ -115,6 +114,9 @@ class SimpleMusicPlayerView(context: Context, attrs: AttributeSet) :
         }
     }
 
+    override fun onMusicChange() {
+
+    }
 
 
     override fun onMusicPause() {
@@ -123,7 +125,6 @@ class SimpleMusicPlayerView(context: Context, attrs: AttributeSet) :
     }
 
     override fun onMusicSeekTo(ms: Int) {
-        super.onMusicSeekTo(ms)
         mFloSeekbar.setProgress(ms)
     }
 
