@@ -23,10 +23,11 @@ git clone https://github.com/bsw112/anime_worldcup.git
 * 가사를 클릭하면 그 가사에 해당하는 재생 구간으로 이동합니다.
 
 ## 실제화면
-![alt](readme/슬라이드15.PNG)
 ![alt](readme/슬라이드16.PNG)
 ![alt](readme/슬라이드17.PNG)
 ![alt](readme/슬라이드18.PNG)
 ![alt](readme/슬라이드19.PNG)
 ![alt](readme/슬라이드20.PNG)
-![alt](readme/슬라이드21.PNG)
+
+## 시연
+[![시연](http://img.youtube.com/vi/Fcr1uXWEnM8/0.jpg)](https://www.youtube.com/watch?v=Fcr1uXWEnM8)
