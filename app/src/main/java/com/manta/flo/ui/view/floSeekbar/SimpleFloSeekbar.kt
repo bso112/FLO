@@ -1,4 +1,4 @@
-package com.manta.flo.ui.customView.floSeekbar
+package com.manta.flo.ui.view.floSeekbar
 
 import android.content.Context
 import android.util.AttributeSet
@@ -10,15 +10,13 @@ import androidx.annotation.MainThread
 import com.manta.flo.R
 import com.manta.flo.utill.MusicPlayer
 
-class BasicFloSeekbar(context: Context, attrs: AttributeSet) :
-    LinearLayout(context, attrs)
-    , FloSeekbar {
-    private val mView: View = View.inflate(context, R.layout.flo_seekbar, this)
+class SimpleFloSeekbar(context: Context, attrs: AttributeSet) :
+    LinearLayout(context, attrs),
+    FloSeekbar
+{
+    private val mView =  View.inflate(context, R.layout.simple_flo_seekbar, this)
     private val mSeekBar = mView.findViewById<SeekBar>(R.id.seekbar_music)
-    private val mStartTextView = mView.findViewById<TextView>(R.id.tv_start)
-    private val mEndTextView = mView.findViewById<TextView>(R.id.tv_end)
     private val mTimelineTextView = mView.findViewById<TextView>(R.id.tv_timeline)
-
 
     init {
         mSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -48,21 +46,20 @@ class BasicFloSeekbar(context: Context, attrs: AttributeSet) :
     }
 
 
-    override fun isSeekBarPressed() = mTimelineTextView.visibility == View.VISIBLE
+    override fun isSeekBarPressed() : Boolean {
+        return mTimelineTextView.visibility == View.VISIBLE
+    }
 
     @MainThread
     override fun setProgress(ms: Int) {
         mSeekBar.progress = ms
-        mStartTextView.text = getTimeString(ms)
     }
 
     @MainThread
-    override fun onMusicSet(){
+    override fun onMusicSet() {
         MusicPlayer.ifMediaPlayerNotNull {
             mSeekBar.max = it.duration
             mSeekBar.progress = it.currentPosition
-            mStartTextView.text = getTimeString(it.currentPosition)
-            mEndTextView.text = getTimeString(it.duration)
         }
     }
 

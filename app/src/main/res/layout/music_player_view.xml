@@ -8,7 +8,7 @@
     android:orientation="vertical">
 
 
-    <com.manta.flo.ui.customView.floSeekbar.BasicFloSeekbar
+    <com.manta.flo.ui.view.floSeekbar.BasicFloSeekbar
         android:id="@+id/flo_seekbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

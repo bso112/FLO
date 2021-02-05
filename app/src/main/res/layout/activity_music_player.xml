@@ -92,7 +92,7 @@
         </androidx.cardview.widget.CardView>
 
 
-        <com.manta.flo.ui.lyric.LyricView
+        <com.manta.flo.ui.view.lyricView.LyricView
             android:id="@+id/lyric_view"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
@@ -130,7 +130,7 @@
 
         </LinearLayout>
 
-        <com.manta.flo.ui.customView.musicPlayerView.MusicPlayerView
+        <com.manta.flo.ui.view.musicPlayerView.MusicPlayerView
             android:id="@+id/music_player"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

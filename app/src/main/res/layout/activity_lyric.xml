@@ -63,7 +63,7 @@
             app:layout_constraintStart_toEndOf="@+id/song_info"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.manta.flo.ui.lyric.LyricView
+        <com.manta.flo.ui.view.lyricView.LyricView
             android:id="@+id/lyric_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -111,7 +111,7 @@
 
         </LinearLayout>
 
-        <com.manta.flo.ui.customView.musicPlayerView.SimpleMusicPlayerView
+        <com.manta.flo.ui.view.musicPlayerView.SimpleMusicPlayerView
             android:id="@+id/music_player"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

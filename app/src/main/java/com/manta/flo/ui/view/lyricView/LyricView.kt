@@ -1,4 +1,4 @@
-package com.manta.flo.ui.lyric
+package com.manta.flo.ui.view.lyricView
 
 import android.content.Context
 import android.util.AttributeSet

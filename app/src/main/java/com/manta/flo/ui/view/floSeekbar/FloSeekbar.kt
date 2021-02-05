@@ -1,4 +1,4 @@
-package com.manta.flo.ui.customView.floSeekbar
+package com.manta.flo.ui.view.floSeekbar
 
 import androidx.annotation.MainThread
 

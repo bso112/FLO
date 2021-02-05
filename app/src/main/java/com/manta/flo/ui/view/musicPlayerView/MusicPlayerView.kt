@@ -1,4 +1,4 @@
-package com.manta.flo.ui.customView.musicPlayerView
+package com.manta.flo.ui.view.musicPlayerView
 
 import android.content.Context
 import android.util.AttributeSet
@@ -14,18 +14,17 @@ import androidx.lifecycle.coroutineScope
 import com.manta.flo.R
 import com.manta.flo.utill.MusicPlayer
 import com.manta.flo.utill.MusicPlayerListener
-import com.manta.flo.ui.customView.floSeekbar.FloSeekbar
+import com.manta.flo.ui.view.floSeekbar.FloSeekbar
 import kotlinx.coroutines.*
 
 
-class SimpleMusicPlayerView(context: Context, attrs: AttributeSet) :
+class MusicPlayerView(context: Context, attrs: AttributeSet) :
     LinearLayout(context, attrs),
     MusicPlayerListener,
-    LifecycleObserver
-{
+    LifecycleObserver {
 
-    private val mView: View = View.inflate(context, R.layout.simple_music_player_view, this)
-    private val mFloSeekbar : FloSeekbar = mView.findViewById<View>(R.id.flo_seekbar) as FloSeekbar
+    private val mView: View = View.inflate(context, R.layout.music_player_view, this)
+    private val mFloSeekbar: FloSeekbar = mView.findViewById<View>(R.id.flo_seekbar) as FloSeekbar
     private val mPlayButton = mView.findViewById<ImageButton>(R.id.btn_play)
     private var lifecycleCoroutineScope: LifecycleCoroutineScope? = null
 
@@ -55,12 +54,12 @@ class SimpleMusicPlayerView(context: Context, attrs: AttributeSet) :
         MusicPlayer.unRegister(this)
     }
 
-    fun registerLifecycleOwner(lifecycle: Lifecycle){
+    fun registerLifecycleOwner(lifecycle: Lifecycle) {
         lifecycle.addObserver(this)
         lifecycleCoroutineScope = lifecycle.coroutineScope
 
         MusicPlayer.ifMediaPlayerNotNull {
-            if(it.isPlaying)
+            if (it.isPlaying)
                 onMusicStart()
         }
     }
@@ -79,7 +78,6 @@ class SimpleMusicPlayerView(context: Context, attrs: AttributeSet) :
             }
             switchPlayButtonImage()
         }
-
 
     }
 
@@ -106,15 +104,14 @@ class SimpleMusicPlayerView(context: Context, attrs: AttributeSet) :
         MusicPlayer.ifMediaPlayerNotNull {
             lifecycleCoroutineScope?.launch {
                 while (it.isPlaying) {
-                    if(!mFloSeekbar.isSeekBarPressed()){
+                    if (!mFloSeekbar.isSeekBarPressed()) {
                         mFloSeekbar.setProgress(it.currentPosition)
                     }
-                        delay(1000)
+                    delay(1000)
                 }
             }
         }
     }
-
 
 
     override fun onMusicPause() {
@@ -132,9 +129,6 @@ class SimpleMusicPlayerView(context: Context, attrs: AttributeSet) :
         switchPlayButtonImage()
         MusicPlayer.seekTo(0)
     }
-
-
-
 
 
 }
