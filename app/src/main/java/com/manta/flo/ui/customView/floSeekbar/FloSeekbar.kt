@@ -1,4 +1,4 @@
-package com.manta.flo.ui.musicPlayer
+package com.manta.flo.ui.customView.floSeekbar
 
 import androidx.annotation.MainThread
 

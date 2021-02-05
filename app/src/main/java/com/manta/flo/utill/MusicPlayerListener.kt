@@ -1,4 +1,4 @@
-package com.manta.flo.ui
+package com.manta.flo.utill
 
 interface MusicPlayerListener {
     fun onMusicSeekTo(ms : Int){}

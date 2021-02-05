@@ -6,7 +6,6 @@ import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
 import com.manta.flo.R
 import com.manta.flo.ui.musicPlayer.MusicPlayerActivity
-import com.manta.flo.ui.musicPlayer.MusicPlayerView
 import kotlinx.coroutines.delay
 
 class SplashActivity : AppCompatActivity() {

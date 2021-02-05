@@ -130,7 +130,7 @@
 
         </LinearLayout>
 
-        <com.manta.flo.ui.musicPlayer.MusicPlayerView
+        <com.manta.flo.ui.customView.musicPlayerView.MusicPlayerView
             android:id="@+id/music_player"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

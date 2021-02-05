@@ -1,4 +1,4 @@
-package com.manta.flo.ui.musicPlayer
+package com.manta.flo.ui.customView.floSeekbar
 
 import android.content.Context
 import android.util.AttributeSet
@@ -8,7 +8,7 @@ import android.widget.SeekBar
 import android.widget.TextView
 import androidx.annotation.MainThread
 import com.manta.flo.R
-import com.manta.flo.ui.MusicPlayer
+import com.manta.flo.utill.MusicPlayer
 
 class BasicFloSeekbar(context: Context, attrs: AttributeSet) :
     LinearLayout(context, attrs)

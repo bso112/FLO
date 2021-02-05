@@ -5,14 +5,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.lifecycleScope
 import com.manta.flo.R
 import com.manta.flo.databinding.ActivityMusicPlayerBinding
-import com.manta.flo.ui.MusicPlayer
 import com.manta.flo.ui.lyric.LyricActivity
 import com.manta.flo.utill.Constants.EXTRA_SONGDATA
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
 
 @AndroidEntryPoint
 class MusicPlayerActivity : AppCompatActivity() {

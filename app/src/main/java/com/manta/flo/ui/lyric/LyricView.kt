@@ -16,9 +16,9 @@ import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.coroutineScope
 import com.manta.flo.R
-import com.manta.flo.ui.Lyric
-import com.manta.flo.ui.MusicPlayer
-import com.manta.flo.ui.MusicPlayerListener
+import com.manta.flo.utill.Lyric
+import com.manta.flo.utill.MusicPlayer
+import com.manta.flo.utill.MusicPlayerListener
 import kotlinx.coroutines.*
 
 

@@ -1,4 +1,4 @@
-package com.manta.flo.ui.musicPlayer
+package com.manta.flo.ui.customView.floSeekbar
 
 import android.content.Context
 import android.util.AttributeSet
@@ -8,7 +8,7 @@ import android.widget.SeekBar
 import android.widget.TextView
 import androidx.annotation.MainThread
 import com.manta.flo.R
-import com.manta.flo.ui.MusicPlayer
+import com.manta.flo.utill.MusicPlayer
 
 class SimpleFloSeekbar(context: Context, attrs: AttributeSet) :
     LinearLayout(context, attrs),
@@ -46,7 +46,9 @@ class SimpleFloSeekbar(context: Context, attrs: AttributeSet) :
     }
 
 
-    override fun isSeekBarPressed() = mTimelineTextView.visibility == View.VISIBLE
+    override fun isSeekBarPressed() : Boolean {
+        return mTimelineTextView.visibility == View.VISIBLE
+    }
 
     @MainThread
     override fun setProgress(ms: Int) {
